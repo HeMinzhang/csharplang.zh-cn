@@ -31,7 +31,7 @@ record_body
     ;
 ```
 
-记录类型是引用类型，类似于类声明。如果 `记录声明(record_declaration)` 没有 `参数列表(argument_list)`， 则提供 `record_base` 的 `参数列表(argument_list)` 是错误的。
+记录类型是引用类型，类似于类声明。如果 `记录声明(record_declaration)` 没有 `参数列表(argument_list)`， 则记录类型提供 `record_base` 的 `参数列表(argument_list)` 是错误的。
 
 部分记录类型最多只有一个 `parameter_list` 提供类型声明。
 
