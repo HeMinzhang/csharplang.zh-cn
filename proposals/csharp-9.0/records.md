@@ -35,7 +35,7 @@ record_body
 
 部分记录类型最多只有一个 `parameter_list` 提供类型声明。
 
-记录类型的参数不能使用 `ref`, `out` 或者 `this` 修饰符（但是 `in` and `params` 是可以的）。
+记录类型的参数不能使用 `ref`, `out` 或者 `this` 修饰符（但是 `in` 和 `params` 是可以的）。
 
 ## <a name="inheritance"></a>继承
 
