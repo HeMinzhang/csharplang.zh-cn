@@ -69,22 +69,22 @@ Type EqualityContract { get; };
 protected override Type EqualityContract { get; };
 ```
 
-可以显式声明属性。 如果显式声明与预期的签名或辅助功能不匹配，或者如果显式声明不允许在派生类型中重写它并且记录类型不是，则是错误的 `sealed` 。 如果合成的或显式声明的属性未在记录类型中重写具有此签名的属性，则该属性是错误的， `Base` 例如，如果在 `Base` 、密封或不是 ) 虚拟等中缺少该属性，则该属性 (。
-合成属性返回 `typeof(R)` ，其中 `R` 是记录类型。
+可以显式声明属性。 如果显式声明与预期的签名或辅助功能不匹配，如果显式声明不允许在派生类型中重写，则记录类型没有被 `sealed` 修饰。 如果派生或显式声明未重写记录类型 `Base` 的属性和签名，则该属性是错误的（例如， `Base` 缺少此属性，或者被 sealed，和非 virtual 修饰等）。
+当 `R` 为记录类型时，合成属性返回 `typeof(R)` 。
 
-记录类型实现 `System.IEquatable<R>` 并包含合成型强类型重载， `Equals(R? other)` 其中 `R` 是记录类型。
-方法为 `public` ，并且方法为， `virtual` 除非记录类型为 `sealed` 。
-可以显式声明方法。 如果显式声明与预期的签名或辅助功能不匹配，或显式声明不允许在派生类型中重写，并且记录类型不是，则是错误的 `sealed` 。
+当 `R` 是记录类型时，记录类型自动实现 `System.IEquatable<R>` ，并包含合成型强类型重载 `Equals(R? other)` 。
+除非记录类型被 `sealed` 修饰，否则方法为 `public` 时，自动被 `virtual` 修饰。
+可以显式声明方法。 如果显式声明与预期的签名或辅助功能不匹配，或显式声明不允许在派生类型中重写，并且记录类型不是 `sealed` ，将因此产生错误提示。
 
-如果 `Equals(R? other)` 是用户定义的 (未合成) 但 `GetHashCode` 不是，则会生成警告。
+如果 `Equals(R? other)` 是用户定义的 (未合成) ，但 `GetHashCode` 是合成声明，则会生成警告。
 
 ```C#
 public virtual bool Equals(R? other);
 ```
-`Equals(R?)` `true` 当且仅当以下各项都为时，合成返回 `true` ：
+当以下各项都为`true` 时，合成声明 `Equals(R?)` 返回 `true` ：
 - `other` 不是 `null` ，并且
-- 对于 `fieldN` 记录类型中不是继承的每个实例字段，其中的值 `System.Collections.Generic.EqualityComparer<TN>.Default.Equals(fieldN, other.fieldN)` `TN` 为字段类型，而
-- 如果有基本记录类型，则的值 `base.Equals(other)` (对) 的非虚拟调用 `public virtual bool Equals(Base? other)` ; 否则为的值 `EqualityContract == other.EqualityContract` 。
+- 对于记录类型中未继承的每个实例字段 `fieldN` ， `System.Collections.Generic.EqualityComparer<TN>.Default.Equals(fieldN, other.fieldN)` 其中 `TN` 字段的类型如下
+- 如果类型为基本记录类型，则值为 `base.Equals(other)` （非虚调用 `public virtual bool Equals(Base? other)` ）; 否则值为 `EqualityContract == other.EqualityContract` 。
 
 记录类型包括合成 `==` 运算符和与 `!=` 运算符等效的运算符，如下所示：
 ```C#
