@@ -95,28 +95,28 @@ public static bool operator!=(R? r1, R? r2)
 ```
 `Equals`运算符调用的方法 `==` 是 `Equals(R? other)` 上面指定的方法。 `!=`运算符委托给 `==` 运算符。 如果显式声明了运算符，则是错误的。
     
-如果记录类型是从基本记录类型派生的 `Base` ，则记录类型包括合成重写等效于如下所示的方法：
+如果记录类型是从基本记录类型 `Base` 派生的，则该记录类型中合成重写等效于如下所示的方法：
 ```C#
 public sealed override bool Equals(Base? other);
 ```
-如果显式声明了重写，则是错误的。 如果方法在记录类型中未重写具有相同签名的方法，则是错误的 `Base` (例如，如果方法在中缺失， `Base` 或者密封或不是虚拟的，等等 ) 。
+如果显式声明重写，将报错。 如果方法在记录类型 `Base` 中未重写具有相同签名的方法，将报错(例如，如果方法在中缺失， `Base` 或者 sealed 和 非virtual 修饰等 ) 。
 合成重写返回 `Equals((object?)other)` 。
 
-记录类型包括合成重写等效于如下所示的方法：
+记录类型中的合成重写等效于如下所示的方法：
 ```C#
 public override bool Equals(object? obj);
 ```
-如果显式声明了重写，则是错误的。 如果该方法不重写 `object.Equals(object? obj)` (例如，由于中间基类型中的隐藏，等等 ) ，则是错误的。
-合成重写返回， `Equals(other as R)` 其中 `R` 是记录类型。
+如果显式声明了重写，将报错。 如果该方法没有重写 `object.Equals(object? obj)` 将报错 (例如，被中间基类型隐藏等 ) 。
+ 如果 `R` 是记录类型，合成重写将返回 `Equals(other as R)` 。
 
 记录类型包括合成重写等效于如下所示的方法：
 ```C#
 public override int GetHashCode();
 ```
 可以显式声明方法。
-如果显式声明不允许在派生类型中重写它并且记录类型不是，则是错误的 `sealed` 。 如果合成的或显式声明的方法不会重写 `object.GetHashCode()` (例如，由于中间基类型中的隐藏等 ) ，则是错误的。
+如果显式声明不允许在派生类型中重写它并且记录类型未 `sealed` 修饰，将报错。 如果合成的或显式声明的方法未重写 `object.GetHashCode()` (例如，由于中间基类型隐藏等 ) ，将报错。
  
-如果 `Equals(R?)` 和中 `GetHashCode()` 的一个是显式声明的，而另一个方法不是显式的，则会报告警告。
+如果显式声明 `Equals(R?)` 和 `GetHashCode()` 其中一个方法，而另一个未显式声明，将报错。
 
 的合成重写 `GetHashCode()` 返回将 `int` 以下值组合在一起的确定性函数的结果：
 - 对于 `fieldN` 记录类型中不是继承的每个实例字段，其中的值 `System.Collections.Generic.EqualityComparer<TN>.Default.GetHashCode(fieldN)` `TN` 为字段类型，而
