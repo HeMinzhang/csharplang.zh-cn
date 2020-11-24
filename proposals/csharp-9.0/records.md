@@ -45,7 +45,7 @@ record_body
 
 除了记录体（record_body）中声明的成员外，记录类型还有其他衍生成员。
 
-记录体中的派生成员, 只有 "匹配" 已声明的签名或者 "匹配" 可访问的非虚成员，才可被继承。
+继承（继承其它类型）记录类型的成员, 只有 "匹配" 已声明的签名或者 "匹配" 可访问的非虚成员，才可被继承。
 
 如果两个成员具有相同的签名，则认为它们是匹配的，或在继承方案中被视为 "隐藏"。
 
@@ -53,40 +53,40 @@ record_body
 
 如果记录的实例字段具有不安全 (unsafe) 类型，则是错误的。
 
-派生成员如下所示：
+继承类型成员如下所示：
 
 ### <a name="equality-members"></a>相等成员
 
-如果记录派生自 `object` ，则该记录类型可用 readonly 修饰属性，等效于如下所示属性：
+如果记录类型继承自 `object` ，则该记录类型可用 readonly 修饰属性，等效于如下所示属性：
 ```C#
 Type EqualityContract { get; };
 ```
 如果记录类型被 `sealed` 修饰，则属性为 `private`。 否则，属性为 `virtual` 和 `protected` 。
 可以显式声明属性。 如果显式声明与预期的签名或辅助功能不匹配，或者显式声明不允许在派生类型中重写它，则记录类型没有被 `sealed` 修饰。
 
-如果记录类型派生自基本记录类型 `Base` ，则该记录类型可用 readonly 修饰属性，等效于如下所示属性：
+如果记录类型继承自基本记录类型 `Base` ，则该记录类型可用 readonly 修饰属性，等效于如下所示属性：
 ```C#
 protected override Type EqualityContract { get; };
 ```
 
-可以显式声明属性。 如果显式声明与预期的签名或辅助功能不匹配，如果显式声明不允许在派生类型中重写，则记录类型没有被 `sealed` 修饰。 如果派生或显式声明未重写记录类型 `Base` 的属性和签名，则该属性是错误的（例如， `Base` 缺少此属性，或者被 sealed，和非 virtual 修饰等）。
+可以显式声明属性。 如果显式声明与预期的签名或辅助功能不匹配，如果显式声明不允许在继承类型中重写，则记录类型没有被 `sealed` 修饰。 如果继承类型或显式声明未重写记录类型 `Base` 的属性和签名，则该属性是错误的（例如， `Base` 缺少此属性，或者被 sealed，和非 virtual 修饰等）。
 当 `R` 为记录类型时，合成属性返回 `typeof(R)` 。
 
-当 `R` 是记录类型时，记录类型自动实现 `System.IEquatable<R>` ，并包含合成型强类型重载 `Equals(R? other)` 。
+当 `R` 是记录类型时，记录类型自动实现 `System.IEquatable<R>` ，并包含继承型强类型重载 `Equals(R? other)` 。
 除非记录类型被 `sealed` 修饰，否则方法为 `public` 时，自动被 `virtual` 修饰。
 可以显式声明方法。 如果显式声明与预期的签名或辅助功能不匹配，或显式声明不允许在派生类型中重写，并且记录类型不是 `sealed` ，将因此产生错误提示。
 
-如果 `Equals(R? other)` 是用户定义的 (未合成) ，但 `GetHashCode` 是合成声明，则会生成警告。
+如果 `Equals(R? other)` 是用户定义的 (未被继承) ，但 `GetHashCode` 是合成声明，则会生成警告。
 
 ```C#
 public virtual bool Equals(R? other);
 ```
-当以下各项都为`true` 时，合成声明 `Equals(R?)` 返回 `true` ：
+当以下各项都为`true` 时，继承类型声明 `Equals(R?)` 返回 `true` ：
 - `other` 不是 `null` ，并且
 - 对于记录类型中未继承的每个实例字段 `fieldN` ， `System.Collections.Generic.EqualityComparer<TN>.Default.Equals(fieldN, other.fieldN)` 其中 `TN` 字段的类型如下
 - 如果类型为基本记录类型，则值为 `base.Equals(other)` （非虚调用 `public virtual bool Equals(Base? other)` ）; 否则值为 `EqualityContract == other.EqualityContract` 。
 
-记录类型包括合成 `==` 运算符和与 `!=` 运算符等效的运算符，如下所示：
+记录类型包括继承 `==` 运算符和与 `!=` 运算符等效的运算符，如下所示：
 ```C#
 public static bool operator==(R? r1, R? r2)
     => (object)r1 == r2 || (r1?.Equals(r2) ?? false);
@@ -95,41 +95,41 @@ public static bool operator!=(R? r1, R? r2)
 ```
 `Equals`运算符调用的方法 `==` 是 `Equals(R? other)` 上面指定的方法。 `!=`运算符委托给 `==` 运算符。 如果显式声明了运算符，则是错误的。
     
-如果记录类型是从基本记录类型 `Base` 派生的，则该记录类型中合成重写等效于如下所示的方法：
+如果记录类型是继承自基本记录类型 `Base` ，则该记录类型中合成重写等效于如下所示的方法：
 ```C#
 public sealed override bool Equals(Base? other);
 ```
-如果显式声明重写，将报错。 如果方法在记录类型 `Base` 中未重写具有相同签名的方法，将报错(例如，如果方法在中缺失， `Base` 或者 sealed 和 非virtual 修饰等 ) 。
-合成重写返回 `Equals((object?)other)` 。
+如果显式声明重写，将报错。 如果方法在记录类型 `Base` 中未重写具有相同签名的方法，将报错(例如，如果方法在中缺失， `Base` 或者被 sealed 和 未被virtual 修饰等 ) 。
+继承类型重写返回 `Equals((object?)other)` 。
 
-记录类型中的合成重写等效于如下所示的方法：
+继承记录类型重写等效于如下所示的方法：
 ```C#
 public override bool Equals(object? obj);
 ```
-如果显式声明了重写，将报错。 如果该方法没有重写 `object.Equals(object? obj)` 将报错 (例如，被中间基类型隐藏等 ) 。
- 如果 `R` 是记录类型，合成重写将返回 `Equals(other as R)` 。
+如果显式声明此重写方法，将报错。 如果该方法不能重写 `object.Equals(object? obj)` 将报错 (例如，被中间基类型隐藏等 ) 。
+ 如果 `R` 是记录类型，此继承方法将重写返回 `Equals(other as R)` 。
 
-记录类型包括合成重写等效于如下所示的方法：
+继承记录类型中重写等效于如下所示的方法：
 ```C#
 public override int GetHashCode();
 ```
-可以显式声明方法。
+此方法可以显式声明。
 如果显式声明不允许在派生类型中重写它并且记录类型未被 `sealed` 修饰，将报错。 如果合成的或显式声明的方法未重写 `object.GetHashCode()` (例如，由于中间基类型隐藏等 ) ，将报错。
  
 如果显式声明 `Equals(R?)` 和 `GetHashCode()` 其中一个方法，而另一个未显式声明，将报错。
 
-的合成重写 `GetHashCode()` 返回将 `int` 以下值组合在一起的确定性函数的结果：
-- 对于 `fieldN` 记录类型中不是继承的每个实例字段，其中的值 `System.Collections.Generic.EqualityComparer<TN>.Default.GetHashCode(fieldN)` `TN` 为字段类型，而
-- 如果有基本记录类型，则的值 `base.GetHashCode()` 为; 否则为的值 `System.Collections.Generic.EqualityComparer<System.Type>.Default.GetHashCode(EqualityContract)` 。
+继承类型的方法重写 `GetHashCode()` 函数，将以下值组合在一起， `int` 返回一个确定性的结果：
+- 对于记录类型中每一个未继承实例字段 `fieldN` ， `System.Collections.Generic.EqualityComparer<TN>.Default.GetHashCode(fieldN)` 其中的值 `TN` 为字段类型，而
+- 在被继承记录类型中，该值为 `base.GetHashCode()` ; 否则值为 `System.Collections.Generic.EqualityComparer<System.Type>.Default.GetHashCode(EqualityContract)` 。
 
-例如，请考虑以下记录类型：
+例如，请考虑如下记录类型：
 ```C#
 record R1(T1 P1);
 record R2(T1 P1, T2 P2) : R1(P1);
 record R3(T1 P1, T2 P2, T3 P3) : R2(P1, P2);
 ```
 
-对于这些记录类型，合成相等性成员将如下所示：
+对于这些记录类型，继承类型中对应成员如下所示：
 ```C#
 class R1 : IEquatable<R1>
 {
@@ -202,8 +202,8 @@ class R3 : R2, IEquatable<R3>
 
 记录类型包含两个复制成员：
 
-* 采用记录类型的单个自变量的构造函数。 它被称为 "复制构造函数"。
-* 使用编译器保留名称的合成公共无参数实例 "clone" 方法
+* 记录类型中单个参数的构造函数。 它被称为 "复制构造函数"。
+* 编译器保留名称的合成公共无参数实例 "clone" 方法
 
 复制构造函数的目的是将状态从参数复制到正在创建的新实例。 此构造函数不会运行记录声明中存在的任何实例字段/属性初始值设定项。 如果未显式声明构造函数，则编译器将合成构造函数。 如果记录是密封的，则构造函数将为私有，否则将受到保护。
 显式声明的复制构造函数必须是公共的或受保护的，除非记录是密封的。
