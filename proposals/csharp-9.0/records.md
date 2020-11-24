@@ -114,7 +114,7 @@ public override bool Equals(object? obj);
 public override int GetHashCode();
 ```
 可以显式声明方法。
-如果显式声明不允许在派生类型中重写它并且记录类型未 `sealed` 修饰，将报错。 如果合成的或显式声明的方法未重写 `object.GetHashCode()` (例如，由于中间基类型隐藏等 ) ，将报错。
+如果显式声明不允许在派生类型中重写它并且记录类型未被 `sealed` 修饰，将报错。 如果合成的或显式声明的方法未重写 `object.GetHashCode()` (例如，由于中间基类型隐藏等 ) ，将报错。
  
 如果显式声明 `Equals(R?)` 和 `GetHashCode()` 其中一个方法，而另一个未显式声明，将报错。
 
